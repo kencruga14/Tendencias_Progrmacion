@@ -2,7 +2,9 @@
 'use strict'
 
 const connectDb = require('../config/db'),
-    { ObjectID} = require('mongodb')
+    { ObjectID} = require('mongodb'),
+    bcrypt = require('bcrypt'),
+    jwt = require('jsonwebtoken')
 
 let prueba = (req, res) =>{
     res.status(200).send('Hola mundo servidor API')
@@ -77,11 +79,53 @@ let obtenerUsr = async(req, res) => {
 }
 }
 
-
+let login = async(req, res) =>{
+    console.log(req.body)
+    let session = req.sessionID
+    let email = req.body.data.email
+    let psw = req.body.data.psw
+    let db = await connectDb()
+    let usuario = null 
+    usuario = await db.collection('usuarios').findOne({email: email})
+    if (usuario){
+        console.log("comparacion "+(bcrypt.compareSync(usuario.psw, psw)))
+        if (bcrypt.compareSync(usuario.psw, psw)) {
+            delete usuario.psw
+            usuario.sessionID = session
+            let token = jwt.sign({data: usuario}, req.sessionID, {
+                algorithm: 'H256',
+                expiresIn: 120
+            })
+            res.status(200).json({
+                transaccion: true,
+                data: null,
+                msg: 'Ok',
+                token: token
+            })
+        } else{ 
+            console.log('usuario ' +usuario.email + " pas " + usuario.psw)
+            res.status(400).json({
+                transaccion: false,
+                data: null,
+                msg: 'Usuario y contraseña invalidos.',
+                token: ''
+            })
+        }
+    } else {
+        console.log('no existe usuario')
+        res.status(400).json({
+            transaccion: false,
+            data: null,
+            msg: 'Usuario y contraseña invalidos.',
+            token: ''
+        })
+    }
+}
 
 module.exports = {
     prueba,
     obtenerUsuarios,
     obtenerUsuario,
-    obtenerUsr
+    obtenerUsr,
+    login
 }

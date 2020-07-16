@@ -1,4 +1,4 @@
-;
+ ;
 'use strict'
 
 const express = require('express');
@@ -13,5 +13,5 @@ api.get('/obtenerusuarios', usuariosControl.obtenerUsuarios);   // Sin parametro
 api.get('/obtenerusuario/:id', usuariosControl.obtenerUsuario);  // params
 api.get('/obtenerusr', usuariosControl.obtenerUsr);  //query
 
-
+api.post('/login', usuariosControl.login);
 module.exports = api;

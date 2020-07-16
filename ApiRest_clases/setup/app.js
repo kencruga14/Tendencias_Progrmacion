@@ -4,22 +4,21 @@
 const express = require('express'),
       bodyParser = require('body-parser'),
       usuarioRutas = require('../rutas/usuario.rutas'),
-      productosRutas = require('../rutas/producto.rutas')
-      passport = require('passport')
-      cors = require('cors')
+      productosRutas = require('../rutas/producto.rutas'),
+      passport = require('passport'),
+      cors = require('cors'),
+      parseurl = require('parseurl'),
       session = require('express-session')
-      parseurl = require('parseurl')
 
 let app = express();
 let connectDb = require('../config/db')
 let db = connectDb()
-
 let sess = {
     secret: process.env.KEY_SESSION,
     resave: false,
     saveUninitialized: true,
     name: 'SessionID',
-    cookie:{
+    cookie: { 
         httpOnly: false,
         maxAge: 60 * 10
     }
@@ -41,11 +40,11 @@ app.use(passport.initialize())
 app.use(passport.session())
 //Ejemplo de sesiones
 app.use(function(req, res,next){
-    if (!req.session.views){
-        req.session.views={}
+    if (!req.session.views) {
+        req.session.views = {}
     }
     let pathname = parseurl(req).pathname
-    req.session.views(pathname) = (req.session.views(pathname) || 0) +1
+    req.session.views[pathname] = (req.session.views[pathname] || 0) +1
     next()
 })
 

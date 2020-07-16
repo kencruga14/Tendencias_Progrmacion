@@ -9,7 +9,8 @@ const { MongoClient } = require('mongodb'),
     PASS_DB,
     NAME_DB 
 } = process.env,
-mongoUrl = `mongodb://${USER_DB}:${PASS_DB}@${HOST_DB}/${NAME_DB}`
+mongoUrl = "mongodb+srv://kencruga:esmeraldas14+@cluster0.p6w1s.mongodb.net/apirest?retryWrites=true&w=majority";
+
 
 let connection
 
